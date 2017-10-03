@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-INPUT_PIN = os.environ.get("INPUT_PIN")
+INPUT_PIN = int(os.environ.get("INPUT_PIN"))
 BRIDGE_IP = os.environ.get("BRIDGE_IP")
 USERNAME = os.environ.get("USERNAME")
 LIGHT_ID = os.environ.get("LIGHT_ID")
