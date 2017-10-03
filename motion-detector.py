@@ -39,7 +39,7 @@ def wait(time=1):
 
 try:
     while True:
-            i = GPIO.input(22)
+            i = GPIO.input(INPUT_PIN)
             # print "i:", i
             if i == 0:
                     # print "no intruders"
