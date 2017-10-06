@@ -58,7 +58,7 @@ def init():
                 turn_light_off()
                 wait(time=2)
             else:
-                logger.warn("motion detected")
+                logger.info("motion detected")
                 turn_light_on()
                 wait(time=2)
     except:
