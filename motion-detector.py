@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+import requests
 import RPi.GPIO as GPIO
 import sys
 import time as tt
@@ -14,8 +16,6 @@ BRIDGE_IP = os.environ.get("BRIDGE_IP")
 USERNAME = os.environ.get("USERNAME")
 LIGHT_ID = os.environ.get("LIGHT_ID")
 
-light_status = 0
-
 logger = logging.getLogger('motion-detector')
 hdlr = logging.FileHandler('motion-detector.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
@@ -27,34 +27,34 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(INPUT_PIN, GPIO.IN)
 
 def turn_light_on():
-    command = ("curl -X PUT -H \"Content-Type: application/json\" -d '{\"on\": true}' http://%s/api/%s/lights/%s/state" % (BRIDGE_IP, USERNAME, LIGHT_ID))
-    os.system(command)
+    payload = json.dumps({"on": True})
+    url = ("http://%s/api/%s/lights/%s/state" % (BRIDGE_IP,USERNAME,LIGHT_ID))
+    response = requests.put(url, payload)
+    if response.code != 200:
+        logger.error(str(response.body))
 
 def turn_light_off():
-    command = ("curl -X PUT -H \"Content-Type: application/json\" -d '{\"on\": false}' http://%s/api/%s/lights/%s/state" % (BRIDGE_IP, USERNAME, LIGHT_ID))
-    os.system(command)
+    payload = json.dumps({"on": False})
+    url = ("http://%s/api/%s/lights/%s/state" % (BRIDGE_IP,USERNAME,LIGHT_ID))
+    response = requests.put(url, payload)
+    if response.code != 200:
+        logger.error(str(response.body))
 
 def wait(time=1):
     tt.sleep(time)
 
 try:
     while True:
-            i = GPIO.input(INPUT_PIN)
-            # print "i:", i
-            if i == 0:
-                    # print "no intruders"
-                    # logger.info("no intruders")
-                    if light_status == 1:
-                        turn_light_off()
-                        light_status = 0
-                    wait(time=0.01)
-            else:
-                    # print "intruders"
-                    # logger.warn("intruders")
-                    if light_status == 0:
-                        turn_light_on()
-                        light_status = 1
-                    wait(time=0.01)
+        if (GPIO.input(INPUT_PIN) == 0):
+            # print "no intruders"
+            # logger.info("no intruders")
+            turn_light_off()
+            wait(time=0.01)
+        else:
+            # print "intruders"
+            # logger.warn("intruders")
+            turn_light_on()
+            wait(time=0.01)
 except:
     e = sys.exc_info()[0]
     logger.error(e)
