@@ -31,15 +31,19 @@ def turn_light_on():
     payload = json.dumps({"on": True})
     url = ("http://%s/api/%s/lights/%s/state" % (BRIDGE_IP,USERNAME,LIGHT_ID))
     response = requests.put(url, payload)
+    logger.info(str(response.status_code))
+    logger.info(str(response.json()))
     if response.status_code != 200:
-        logger.error(str(response.body))
+        logger.error(str(response.json()))
 
 def turn_light_off():
     payload = json.dumps({"on": False})
     url = ("http://%s/api/%s/lights/%s/state" % (BRIDGE_IP,USERNAME,LIGHT_ID))
     response = requests.put(url, payload)
+    logger.info(str(response.status_code))
+    logger.info(str(response.json()))
     if response.status_code != 200:
-        logger.error(str(response.body))
+        logger.error(str(response.json()))
 
 def wait(time=1):
     tt.sleep(time)
