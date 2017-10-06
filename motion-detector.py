@@ -48,18 +48,21 @@ def turn_light_off():
 def wait(time=1):
     tt.sleep(time)
 
-try:
-    while True:
-        if (GPIO.input(INPUT_PIN) == 0):
-            # print "no intruders"
-            # logger.info("no intruders")
-            turn_light_off()
-            wait(time=0.01)
-        else:
-            # print "intruders"
-            # logger.warn("intruders")
-            turn_light_on()
-            wait(time=0.01)
-except:
-    e = sys.exc_info()[0]
-    logger.error(e)
+def init():
+    turn_light_off()
+
+    try:
+        while True:
+            if (GPIO.input(INPUT_PIN) == 0):
+                logger.info("no motion detected")
+                turn_light_off()
+                wait(time=2)
+            else:
+                logger.warn("motion detected")
+                turn_light_on()
+                wait(time=2)
+    except:
+        e = sys.exc_info()[0]
+        logger.error(e)
+
+init()
